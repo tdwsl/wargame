@@ -1,0 +1,14 @@
+
+gds-quit! ( addr -- )			set quit word ( -- )
+gds-update! ( addr -- )			set update word ( -- )
+gds-draw! ( addr -- )			set draw word word ( -- )
+gds-click! ( addr -- )			set click word ( -- )
+gds-keydown! ( addr -- )		set keydown word ( keycode -- )
+gds-keyup! ( addr -- )			set keyup word ( keycode -- )
+gds-updatems! ( ms -- )			set update milliseconds
+gds-mouse ( -- x y )			get mouse xy
+gds-window ( -- w h )			get window size
+gds-loadimg ( str len -- id )		load texture
+gds-blit ( id cx cy cw ch x y )		blit texture
+gds-redraw ( -- )			signal redraw
+
