@@ -6,8 +6,17 @@ create units 80 unit-sz * allot
 0 constant red-team
 1 constant blue-team
 
-create unit-info
-s" Troop
+1 cells 2 + constant unitd-sz
+
+create unitds
+s" Infantry" c, , 0 c,
+s" Tank" c, , 1 c,
+
+
+unitds .
+unitds c@ .
+unitds 1+ @ .
+unitds 1+ @ @ . cr
 
 : unit ( u -- addr ) unit-sz * units + ;
 
@@ -18,6 +27,18 @@ s" Troop
 : unit-ap 4 cells + 4 + ;
 : unit-xy@ ( addr -- x y ) dup @ swap cell+ @ ;
 : unit-xy! ( x y addr -- ) swap over cell+ ! ! ;
+
+: unitd ( u -- addr ) unitd-sz * unitds + ;
+: unitd-name tile-name ;
+: unitd-class cell+ 2 + c@ ;
+
+: unit-at ( x y -- addr|0 )
+  nunits 0 do
+    2dup i unit unit-xy@ rot = >r = r> and if
+      2drop i unit unloop exit
+    then
+  loop
+  2drop 0 ;
 
 : add-unit ( x y type team -- )
   nunits unit >r

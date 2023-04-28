@@ -19,6 +19,43 @@
 : hl 8 c, ;
 : mt 9 c, ;
 
+1 cells 8 + constant tile-sz
+create tiles
+s" Deep Water" c, , 1 c,
+0 c, 0 c, 0 c, 4 c, 3 c, 5 c,
+s" Water" c, , 1 c,
+0 c, 0 c, 5 c, 5 c, 4 c, 5 c,
+s" Shallow Water" c, , 1 c,
+1 c, 0 c, 3 c, 2 c, 5 c, 5 c,
+s" Grass" c, , 1 c,
+5 c, 3 c, 0 c, 0 c, 5 c, 5 c,
+s" Sand" c, , 1 c,
+3 c, 1 c, 0 c, 0 c, 5 c, 5 c,
+s" Road" c, , 1 c,
+5 c, 5 c, 0 c, 0 c, 5 c, 5 c,
+s" Bridge" c, , 1 c,
+5 c, 5 c, 3 c, 3 c, 5 c, 5 c,
+s" Forest" c, , 4 c,
+2 c, 0 c, 0 c, 0 c, 5 c, 5 c,
+s" Hill" c, , 3 c,
+2 c, 0 c, 0 c, 0 c, 4 c, 5 c,
+s" Mountain" c, , 5 c,
+1 c, 0 c, 0 c, 0 c, 1 c, 3 c,
+
+: tile ( u -- addr )
+  tile-sz * tiles + ;
+
+: tile-name ( addr -- str len )
+  dup 1+ @ swap c@ ;
+: tile-defense cell+ 1+ c@ ;
+: tile-units cell+ 2 + ;
+: tile-infantry tile-units c@ ;
+: tile-land tile-units 1 + c@ ;
+: tile-smallboat tile-units 2 + c@ ;
+: tile-sea tile-units 3 + c@ ;
+: tile-heli tile-units 4 + c@ ;
+: tile-air tile-units 5 + c@ ;
+
 : load-map ( addr -- )
   dup @ to mapw cell+ dup @ to maph cell+ to map ;
 
