@@ -26,3 +26,7 @@ dw dw dw dw dw dw dw dw dw dw
  dw dw dw dw dw dw dw dw dw dw
 dw dw dw dw dw dw dw dw dw dw
  dw dw dw dw dw dw dw dw dw dw
+
+:noname
+  3 4 0 0 add-unit
+;

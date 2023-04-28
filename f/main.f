@@ -1,6 +1,7 @@
 
 s" img/terrain.png" gds-loadimg constant t-terrain
 s" img/units.png" gds-loadimg constant t-units
+s" img/ui.png" gds-loadimg constant t-ui
 
 20 gds-updatems!
 2 gds-scale!
@@ -12,9 +13,17 @@ s" img/units.png" gds-loadimg constant t-units
 0 value cursx
 0 value cursy
 
+include f/font.f
 include f/map.f
+include f/units.f
 
-include f/lvl1.f load-map
+: load-level ( addr addr -- )
+  0 to nunits
+  execute
+  load-map ;
+
+include f/lvl1.f
+load-level
 
 : edge-scroll ( -- )
   gds-mouse 2dup
@@ -38,12 +47,21 @@ include f/lvl1.f load-map
     to cursy to cursx
   else 2drop then ;
 
+: draw-cursor t-ui 0 0 32 32 cursx cursy map-blit ;
+
+: draw-current-tile
+  t-ui 0 32 160 64 gds-window 64 - swap 160 - swap gds-blit
+  t-terrain 0 cursx cursy map-tile 32 * 32 32
+  gds-window 56 - swap 152 - swap gds-blit ;
+
 \ *** gds words ***
 
 :noname
   t-terrain 0 0 32 512 32 32 gds-blit
   draw-map
-  t-units 0 0 32 32 cursx cursy map-blit
+  draw-units
+  draw-cursor
+  draw-current-tile
 ; gds-draw!
 
 :noname
