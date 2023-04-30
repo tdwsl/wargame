@@ -19,6 +19,14 @@ s" img/font.png" gds-loadimg constant t-font
 
 0 value panelv
 
+48 constant menuw
+3 cells 1+ constant menu-sz
+create menu menu-sz 15 * allot
+0 value menux
+0 value menuy
+0 value menun
+0 value menue?
+
 include f/font.f
 include f/map.f
 include f/units.f
@@ -87,6 +95,28 @@ load-level
 : get-panelv
   cursy th * th 2/ + map-yo + gds-window 2/ nip < negate to panelv ;
 
+: draw-menu
+  menun 0 ?do
+    t-ui 0 96 menuw 16 menux menuw menue? * + menuy i 16 * + gds-blit
+    menux menuw menue? * + 2 + menuy i 16 * + 1+ text-cursor
+    menu i menu-sz * + str@ draw-text
+  loop ;
+
+: menu-add ( addr addr str len -- )
+  menun menu-sz * menu + dup >r str! r>
+  cell+ 1+ dup >r ! r> cell+ !
+  menun 1+ to menun ;
+
+: build-menu-unit ( addr -- )
+  drop ;
+
+: build-menu
+  gds-mouse drop menuw + gds-window drop >= to menue?
+  0 to menun
+  cursx cursy unit-at ?dup if build-menu-unit then
+  0 0 s" Map info" menu-add
+  0 0 s" End turn" menu-add ;
+
 \ *** gds words ***
 
 :noname
@@ -96,18 +126,24 @@ load-level
   draw-cursor
   draw-current-tile
   draw-current-unit
+  draw-menu
+  0 0 text-cursor
 ; gds-draw!
 
 :noname
+  menux map-xo - menuy map-yo -
   map-xo map-yo
   edge-scroll scroll-restrict
   map-yo <> swap map-xo <> or if gds-redraw then
-  \ panelv gds-mouse nip gds-window 2/ nip <= negate to panelv
-  \ panelv <> if gds-redraw then
+  map-yo + to menuy map-xo + to menux
 ; gds-update!
 
 :noname
-  ." click " gds-mouse swap . . cr
-  get-cursor
+  cursx cursy get-cursor
+  cursy = swap cursx = and if
+    gds-mouse to menuy to menux
+    menun if 0 to menun else build-menu then
+    gds-redraw
+  else 0 to menun then
 ; gds-click!
 

@@ -45,8 +45,11 @@ s" Mountain" c, , 5 c,
 : tile ( u -- addr )
   tile-sz * tiles + ;
 
-: tile-name ( addr -- str len )
-  dup 1+ @ swap c@ ;
+: str@ ( addr -- str len ) dup 1+ @ swap c@ ;
+: str! ( str len addr -- )
+  swap over c! 1+ ! ;
+
+: tile-name ( addr -- str len ) str@ ;
 : tile-defense cell+ 1+ c@ ;
 : tile-units cell+ 2 + ;
 : tile-infantry tile-units c@ ;

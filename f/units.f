@@ -12,12 +12,6 @@ create unitds
 s" Infantry" c, , 0 c,
 s" Tank" c, , 1 c,
 
-
-unitds .
-unitds c@ .
-unitds 1+ @ .
-unitds 1+ @ @ . cr
-
 : unit ( u -- addr ) unit-sz * units + ;
 
 : unit-team 4 cells + ;
@@ -29,7 +23,7 @@ unitds 1+ @ @ . cr
 : unit-xy! ( x y addr -- ) swap over cell+ ! ! ;
 
 : unitd ( u -- addr ) unitd-sz * unitds + ;
-: unitd-name tile-name ;
+: unitd-name str@ ;
 : unitd-class cell+ 2 + c@ ;
 
 : unit-at ( x y -- addr|0 )

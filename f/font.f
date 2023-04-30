@@ -1,8 +1,8 @@
 
 create kern
-\
+
   0 c, 0 c, 0 c, 0 c, 0 c, 0 c, 0 c, 0 c, 0 c, 0 c, 0 c, 0 c, 0 c, 0 c, 0 c, 0 c,
-\
+
   0 c, 0 c, 0 c, 0 c, 0 c, 0 c, 0 c, 0 c, 0 c, 0 c, 0 c, 0 c, 0 c, 0 c, 0 c, 0 c,
 \      !    "    #    $    %    &    '    (    )    *    +    ,    -    .    /
   4 c, 2 c, 4 c, 9 c, 6 c, 7 c, 7 c, 2 c, 4 c, 4 c, 6 c, 6 c, 3 c, 6 c, 2 c, 4 c,
