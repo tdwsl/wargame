@@ -26,7 +26,6 @@ create menu menu-sz 15 * allot
 0 value menux
 0 value menuy
 0 value menun
-0 value menue?
 
 include f/font.f
 include f/map.f
@@ -97,8 +96,8 @@ load-level
 
 : draw-menu
   menun 0 ?do
-    t-ui 0 96 menuw menuh menux menuw menue? * + menuy i menuh * + gds-blit
-    menux menuw menue? * + 2 + menuy i menuh * + 1+ text-cursor
+    t-ui 0 96 menuw menuh menux menuy i menuh * + gds-blit
+    menux 2 + menuy i menuh * + 1+ text-cursor
     menu i menu-sz * + str@ draw-text
   loop ;
 
@@ -120,10 +119,15 @@ load-level
 
 : build-menu
   0 to menun
-  gds-mouse drop menuw + gds-window drop >= to menue?
+  gds-mouse drop menuw + gds-window drop >= if
+    menux menuw - to menux
+  then
   cursx cursy unit-at ?dup if build-menu-unit then
   ['] m-map-info 0 s" Map info" menu-add
-  ['] m-end-turn 0 s" End turn" menu-add ;
+  ['] m-end-turn 0 s" End turn" menu-add
+  menuy menun menuh * + gds-window nip >= if
+    menuy menun menuh * - to menuy
+  then ;
 
 : in-rect? ( x y  x y w h -- tf )
   >r >r 2over 2over
@@ -159,7 +163,7 @@ load-level
 :noname
   \ click menu
   menun 0 ?do
-    gds-mouse menux menue? menuw * + menuy i menuh * +
+    gds-mouse menux menuy i menuh * +
     menuw menuh in-rect? if
       i menu-execute
       unloop exit
