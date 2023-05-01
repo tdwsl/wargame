@@ -20,6 +20,7 @@ s" img/font.png" gds-loadimg constant t-font
 0 value panelv
 
 48 constant menuw
+16 constant menuh
 3 cells 1+ constant menu-sz
 create menu menu-sz 15 * allot
 0 value menux
@@ -57,9 +58,8 @@ load-level
   gds-mouse
   map-yo - th 2/ - th / to cursy
   map-xo - cursy 2 mod tfs * - tw / to cursx
-  cursx cursy in-bounds? 0= if
-    to cursy to cursx
-  else 2drop then ;
+  cursx cursy in-bounds? if 2drop
+  else to cursy to cursx 1 to menun then ;
 
 : draw-cursor t-ui 0 0 32 32 cursx cursy map-blit ;
 
@@ -97,25 +97,43 @@ load-level
 
 : draw-menu
   menun 0 ?do
-    t-ui 0 96 menuw 16 menux menuw menue? * + menuy i 16 * + gds-blit
-    menux menuw menue? * + 2 + menuy i 16 * + 1+ text-cursor
+    t-ui 0 96 menuw menuh menux menuw menue? * + menuy i menuh * + gds-blit
+    menux menuw menue? * + 2 + menuy i menuh * + 1+ text-cursor
     menu i menu-sz * + str@ draw-text
   loop ;
 
-: menu-add ( addr addr str len -- )
-  menun menu-sz * menu + dup >r str! r>
-  cell+ 1+ dup >r ! r> cell+ !
+: menu-add ( addr arg str len -- )
+  menun menu-sz * menu + >r
+  r@ str!
+  r@ cell+ 1+ !
+  r> 2 cells + 1+ !
   menun 1+ to menun ;
 
 : build-menu-unit ( addr -- )
   drop ;
 
+: m-map-info ( x -- )
+  drop ." Map info" cr ;
+
+: m-end-turn ( x -- )
+  drop ." End turn" cr ;
+
 : build-menu
-  gds-mouse drop menuw + gds-window drop >= to menue?
   0 to menun
+  gds-mouse drop menuw + gds-window drop >= to menue?
   cursx cursy unit-at ?dup if build-menu-unit then
-  0 0 s" Map info" menu-add
-  0 0 s" End turn" menu-add ;
+  ['] m-map-info 0 s" Map info" menu-add
+  ['] m-end-turn 0 s" End turn" menu-add ;
+
+: in-rect? ( x y  x y w h -- tf )
+  >r >r 2over 2over
+  rot < -rot >= and r> r> rot >r
+  rot + >r + r>
+  rot >= >r < r> and r> and ;
+
+: menu-execute ( u -- )
+  menu-sz * menu + cell+ 1+ dup @ swap cell+ @
+  execute 0 to menun ;
 
 \ *** gds words ***
 
@@ -139,6 +157,15 @@ load-level
 ; gds-update!
 
 :noname
+  \ click menu
+  menun 0 ?do
+    gds-mouse menux menue? menuw * + menuy i menuh * +
+    menuw menuh in-rect? if
+      i menu-execute
+      unloop exit
+    then
+  loop
+  \ reposition cursor
   cursx cursy get-cursor
   cursy = swap cursx = and if
     gds-mouse to menuy to menux
