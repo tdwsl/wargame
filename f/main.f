@@ -19,6 +19,13 @@ s" img/font.png" gds-loadimg constant t-font
 
 0 value panelv
 
+0 value info-status
+1 constant info-mapinfo
+2 constant info-unitinfo
+
+256 constant infow
+208 constant infoh
+
 48 constant menuw
 16 constant menuh
 3 cells 1+ constant menu-sz
@@ -112,6 +119,7 @@ load-level
   drop ;
 
 : m-map-info ( x -- )
+  info-mapinfo to info-status
   drop ." Map info" cr ;
 
 : m-end-turn ( x -- )
@@ -139,9 +147,24 @@ load-level
   menu-sz * menu + cell+ 1+ dup @ swap cell+ @
   execute 0 to menun ;
 
+: draw-info
+  gds-window 128 / 1+ swap 128 / 1+ swap 0 do
+    dup 0 do
+      t-ui 128 0 128 128 i 128 * j 128 * gds-blit
+    loop
+  loop drop ;
+
+: draw-mapinfo
+  draw-info
+  cursx cursy map-tile tile >r
+  2 2 text-cursor
+  r@ tile-name draw-text
+  r> drop ;
+
 \ *** gds words ***
 
 :noname
+  info-status info-mapinfo = if draw-mapinfo exit then
   get-panelv
   draw-map
   draw-units
@@ -149,7 +172,6 @@ load-level
   draw-current-tile
   draw-current-unit
   draw-menu
-  0 0 text-cursor
 ; gds-draw!
 
 :noname
@@ -161,6 +183,7 @@ load-level
 ; gds-update!
 
 :noname
+  info-status if exit then
   \ click menu
   menun 0 ?do
     gds-mouse menux menuy i menuh * +
