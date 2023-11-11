@@ -1,6 +1,7 @@
 /* game development system - tdwsl 2023 */
 
 #include <aster.h>
+#include <aster_boot.h>
 #include <SDL2/SDL.h>
 #include <SDL2/SDL_image.h>
 #include <assert.h>
@@ -138,34 +139,34 @@ void mainLoop()
             }
             switch(ev.type) {
             case SDL_QUIT:
-                if(wquit) aster_execute(wquit);
+                if(wquit) aster_runAddr(wquit);
                 return;
             case SDL_KEYDOWN:
                 if(wkeydown) {
                     aster_stack[aster_sp++] = ev.key.keysym.sym;
-                    aster_execute(wkeydown);
+                    aster_runAddr(wkeydown);
                 }
                 break;
             case SDL_KEYUP:
                 if(wkeyup) {
                     aster_stack[aster_sp++] = ev.key.keysym.sym;
-                    aster_execute(wkeyup);
+                    aster_runAddr(wkeyup);
                 }
                 break;
             case SDL_MOUSEBUTTONDOWN:
-                if(wclick) aster_execute(wclick);
+                if(wclick) aster_runAddr(wclick);
                 break;
             }
         }
         currentTime = SDL_GetTicks();
         while(currentTime-lastUpdate >= updatems
                 || currentTime < lastUpdate) {
-            if(wupdate) aster_execute(wupdate);
+            if(wupdate) aster_runAddr(wupdate);
             lastUpdate += updatems;
         }
         if(redraw) {
             SDL_RenderClear(renderer);
-            if(wdraw) aster_execute(wdraw);
+            if(wdraw) aster_runAddr(wdraw);
             SDL_RenderPresent(renderer);
             redraw = 0;
         }
@@ -175,9 +176,10 @@ void mainLoop()
 int main(int argc, char **args)
 {
     initSDL();
-    aster_init();
+    aster_init(0, 0);
+    aster_runString(aster_boot);
 
-    aster_bye = f_bye;
+    aster_addC(f_bye, "bye", 0);
     aster_addC(f_quitSet, "GDS-QUIT!", 0);
     aster_addC(f_drawSet, "GDS-DRAW!", 0);
     aster_addC(f_keydownSet, "GDS-KEYDOWN!", 0);

@@ -155,20 +155,21 @@ load-level
   loop drop ;
 
 : draw-mapinfo
-  draw-info
   cursx cursy map-tile tile >r
   2 2 text-cursor
   r@ tile-name draw-text
+  2 16 text-cursor
+  r@ tile-desc 240 draw-text-wrapped
   r> drop ;
 
 \ *** gds words ***
 
 :noname
-  info-status info-mapinfo = if draw-mapinfo exit then
   get-panelv
   draw-map
   draw-units
   draw-cursor
+  info-status info-mapinfo = if draw-mapinfo exit then
   draw-current-tile
   draw-current-unit
   draw-menu
